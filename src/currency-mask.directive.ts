@@ -44,7 +44,8 @@ export class CurrencyMaskDirective implements AfterViewInit, ControlValueAccesso
       suffix: "",
       thousands: ",",
       nullable: false,
-      inputMode: CurrencyMaskInputMode.FINANCIAL
+      inputMode: CurrencyMaskInputMode.FINANCIAL,
+      optionalDecimal: false,
   };
 
   constructor(@Optional() @Inject(CURRENCY_MASK_CONFIG) private currencyMaskConfig: CurrencyMaskConfig,

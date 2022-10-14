@@ -1,6 +1,7 @@
 export class InputManager {
 
     private _storedRawValue: string;
+    private _hasDecimal: boolean
 
     constructor(private htmlInputElement: any) {
     }

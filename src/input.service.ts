@@ -4,6 +4,8 @@ import { CurrencyMaskConfig, CurrencyMaskInputMode } from "./currency-mask.confi
 export class InputService {
     private SINGLE_DIGIT_REGEX: RegExp = new RegExp(/^[0-9\u0660-\u0669\u06F0-\u06F9]$/);
     private ONLY_NUMBERS_REGEX: RegExp = new RegExp(/[^0-9\u0660-\u0669\u06F0-\u06F9]/g);
+    private initalPrecision = 0;
+    private hasDecimal = false;
 
     PER_AR_NUMBER: Map<string, string> = new Map<string, string>();
 
@@ -35,15 +37,27 @@ export class InputService {
 
     constructor(private htmlInputElement: any, private options: CurrencyMaskConfig) {
         this.inputManager = new InputManager(htmlInputElement);
+        this.initalPrecision = options.precision;
+        if(options.optionalDecimal) {
+            this.options.precision = 0;
+        }
         this.initialize()
     }
 
     addNumber(keyCode: number): void {
-        const {decimal, precision, inputMode} = this.options;
+        const {decimal, optionalDecimal, inputMode} = this.options;
+        let precision = this.options.precision;
         let keyChar = String.fromCharCode(keyCode);
         const isDecimalChar = keyChar === this.options.decimal;
 
+        if(isDecimalChar && optionalDecimal) {
+            precision = this.initalPrecision;
+            this.hasDecimal = true;
+            this.options.precision = this.initalPrecision;
+        }
+
         if (!this.rawValue) {
+            // initialiize rawValue, selectionStart
             this.rawValue = this.applyMask(false, keyChar);
             let selectionStart:number = undefined;
             if (inputMode === CurrencyMaskInputMode.NATURAL && precision > 0) {
@@ -83,7 +97,7 @@ export class InputService {
     }
 
     applyMask(isNumber: boolean, rawValue: string, disablePadAndTrim = false): string {
-        let {allowNegative, decimal, precision, prefix, suffix, thousands, min, max, inputMode} = this.options;
+        let {allowNegative, decimal, prefix, suffix, precision, thousands, min, max, inputMode} = this.options;
 
         rawValue = isNumber ? new Number(rawValue).toFixed(precision) : rawValue;
         let onlyNumbers = rawValue.replace(this.ONLY_NUMBERS_REGEX, "");
@@ -124,7 +138,7 @@ export class InputService {
         // Ensure precision number works well with more than 2 digits
         // 23 / 100... 233 / 1000 and so on
         const divideBy = Number('1'.padEnd(precision + 1, '0'));
-        
+
         // Restrict to the min and max values.
         let newValue = integerValue + (decimalValue / divideBy);
 
@@ -218,7 +232,7 @@ export class InputService {
         selectionEnd = Math.min(suffixStart, Math.max(selectionEnd, prefix.length));
         selectionStart = Math.min(suffixStart, Math.max(selectionStart, prefix.length));
 
-        // Check if selection was entirely in the prefix or suffix. 
+        // Check if selection was entirely in the prefix or suffix.
         if (selectionStart === selectionEnd &&
             this.inputSelection.selectionStart !== this.inputSelection.selectionEnd) {
             this.updateFieldValue(selectionStart);
@@ -298,6 +312,12 @@ export class InputService {
 
     updateOptions(options: any): void {
         let value: number = this.value;
+
+        this.initalPrecision = options.precision;
+        if(options.optionalDecimal) {
+            options.precision = 0;
+        }
+
         this.options = options;
         this.value = value;
     }

@@ -13,6 +13,7 @@ export interface CurrencyMaskConfig {
   min?: number;
   max?: number;
   inputMode? : CurrencyMaskInputMode;
+  optionalDecimal?: boolean;
 }
 
 export enum CurrencyMaskInputMode {

@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { CurrencyMaskInputMode } from '../src/currency-mask.config';
+import { CurrencyMaskInputMode, CurrencyMaskConfig } from '../src/currency-mask.config';
 
 @Component({
   selector: 'demo-app',
@@ -14,7 +14,7 @@ import { CurrencyMaskInputMode } from '../src/currency-mask.config';
             class="form-control"
             currencyMask
             formControlName="value"
-            [placeholder]="'R$ 0,00'"
+            [placeholder]="'$0'"
             [options]="ngxCurrencyOptions"
           />
         </div>
@@ -54,14 +54,16 @@ export class DemoComponent {
   @ViewChild('valueInput', { static: true }) valueInput: ElementRef;
 
   public form: FormGroup;
-  public ngxCurrencyOptions = {
-    prefix: 'R$ ',
-    thousands: '.',
-    decimal: ',',
+  public ngxCurrencyOptions: Partial<CurrencyMaskConfig> = {
+    prefix: '$',
+    thousands: ',',
+    decimal: '.',
     allowNegative: false,
     nullable: true,
     max: 250_000_000,
-    inputMode: CurrencyMaskInputMode.FINANCIAL,
+    inputMode: CurrencyMaskInputMode.NATURAL,
+    optionalDecimal: true,
+    precision: 2,
   };
 
   constructor(private formBuilder: FormBuilder) {

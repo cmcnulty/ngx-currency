@@ -5,7 +5,7 @@ import {CurrencyMaskConfig, CurrencyMaskInputMode} from "../src/currency-mask.co
 import { MockHtmlInputElement } from './mock-html-input-element';
 
 describe('Testing InputService', () => {
-  
+
   let options: CurrencyMaskConfig;
   let inputService: InputService;
 
@@ -439,7 +439,7 @@ describe('Testing InputService', () => {
   });
 
   describe('applyMask', ()=> {
-    it('should use precision 2 and consider decimal part when typing 1 with empty value', () => {        
+    it('should use precision 2 and consider decimal part when typing 1 with empty value', () => {
       options.precision = 2;
 
       inputService = new InputService({
@@ -449,6 +449,19 @@ describe('Testing InputService', () => {
 
       const result = inputService.applyMask(false, '1');
       expect(result).to.be.equal('0,01');
+    });
+
+    it('allow precision, while also allowing non decimal', () => {
+        options.precision = 2;
+        options.optionalDecimal = true;
+
+        inputService = new InputService({
+            selectionStart: 0,
+            selectionEnd: 0
+        }, options);
+
+        const result = inputService.applyMask(false, '1');
+        expect(result).to.be.equal('1');
     });
 
     it('should use precision 3 and consider decimal part when typing 1 with empty value', () => {
@@ -470,7 +483,7 @@ describe('Testing InputService', () => {
         selectionStart: 6,
         selectionEnd: 6
       }, options);
-      
+
       const result = inputService.applyMask(false, '12345');
       expect(result).to.be.equal('123,45');
     });
