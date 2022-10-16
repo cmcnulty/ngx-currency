@@ -44,7 +44,7 @@ export class InputManager {
             selectionStart = this.htmlInputElement.selectionStart;
             selectionEnd = this.htmlInputElement.selectionEnd;
         } else {
-            let range = (<any>document).selection.createRange();
+            let range = (<any>document).document.getSelection();
 
             if (range && range.parentElement() == this.htmlInputElement) {
                 let lenght = this.htmlInputElement.value.length;

@@ -16,6 +16,7 @@ import { CurrencyMaskInputMode } from '../src/currency-mask.config';
             formControlName="value"
             [placeholder]="'R$ 0,00'"
             [options]="ngxCurrencyOptions"
+            type="number"
           />
         </div>
       </div>
